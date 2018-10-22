@@ -1,4 +1,8 @@
-html, body {
+* {
+	box-sizing: border-box;
+}
+
+html, body, #container {
 	font-family: Arial, sans-serif;
 	height: 100%;
 	margin: 0;
@@ -7,4 +11,64 @@ html, body {
 
 #map {
 	height: 100%;
+	width: 70%;
+	float: right;
+}
+
+#filter-container {
+	height: 100%;
+	width: 28%;
+	margin-left: 10px;
+	float: left;
+}
+
+#filter-input input{
+	font-size: 1em; 
+	padding: 0.2em;
+}
+
+h2 {
+	color: grey;
+}
+
+.filter-input {
+	width: 70%;
+	border: 0.5px solid grey;
+}
+
+.filter-button {
+	background: #38b03f;
+	color: white;
+	border: none;
+	padding-top: 0.5px;
+	padding-bottom: 0.5px;
+}
+
+ul {
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	width: 70%;
+}
+
+li {
+	border: none;
+	line-height: 1.5;
+	margin-top: 10px;
+	transition: all 0.6s;
+}
+
+li:hover {
+	background-color: #F89B4D;
+}
+
+li.highlight {
+	background-color: #F89B4D;
+}
+
+li>button {
+	border: none;
+	width: 100%;
+	background: transparent;
+	text-align: left;
 }
