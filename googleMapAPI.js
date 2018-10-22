@@ -6,49 +6,56 @@ let locations = [
 			position: {lat:39.908967, lng:116.397491}, 
 	 	 	map: map, 
 	 		title: '天安门'},
-	 	info: "天安门坐落在中国北京市中心，故宫的南端，与天安门广场隔长安街相望，是明清两代北京皇城的正门。" 
+	 	info: "天安门坐落在中国北京市中心，故宫的南端，与天安门广场隔长安街相望，是明清两代北京皇城的正门。",
+	 	infoUrl:""
 	 },
 	 {
 		marker: {
 			position: {lat:39.882435, lng:116.406595}, 
 	 	 	map: map, 
 	 		title: '天坛'},
-	 	info: "天坛公园位于北京市南部，东城区永定门内大街东侧，占地约270万平方米。" 
+	 	info: "天坛公园位于北京市南部，东城区永定门内大街东侧，占地约270万平方米。",
+	 	infoUrl:""	 	
 	 },
 	 {
 		marker: {
 			position: {lat:39.925099, lng:116.396715}, 
 	 	 	map: map, 
-	 		title: '景山'},
-	 	info: "景山公园位于故宫北面，为元、明、清3代的御苑，是一座环境优美的皇家园林。" 
+	 		title: '景山公园'},
+	 	info: "景山公园位于故宫北面，为元、明、清3代的御苑，是一座环境优美的皇家园林。", 
+	 	infoUrl:""	 	
 	 },
 	 {
 		marker: {
 			position: {lat:40.000711, lng:116.275486}, 
 	 	 	map: map, 
 	 		title: '颐和园'},
-	 	info: "颐和园是中国现存规模最大、保存最完整的皇家园林，中国四大名园之一。" 
+	 	info: "颐和园是中国现存规模最大、保存最完整的皇家园林，中国四大名园之一。",
+	 	infoUrl:""	 	 
 	 },
 	 {
 		marker: {
 			position: {lat:40.008353, lng:116.298193}, 
 	 	 	map: map, 
 	 		title: '圆明园'},
-	 	info: "圆明园又称圆明三园，是清代一座大型皇家宫苑，由圆明园、长春园和万春园组成，所以也叫圆明三园。" 
+	 	info: "圆明园又称圆明三园，是清代一座大型皇家宫苑，由圆明园、长春园和万春园组成，所以也叫圆明三园。",
+	 	infoUrl:""	 	 
 	 },
 	 {
 		marker: {
 			position: {lat:39.925694, lng:116.389253}, 
 	 	 	map: map, 
 	 		title: '北海公园'},
-	 	info: "北海公园位于北京市中心区，城内景山西侧，在故宫的西北面，与中海、南海合称三海。" 
+	 	info: "北海公园位于北京市中心区，城内景山西侧，在故宫的西北面，与中海、南海合称三海。",
+	 	infoUrl:""	 	 
 	 },
 	 {
 		marker: {
 			position: {lat:39.953163, lng:116.416008}, 
 	 	 	map: map, 
 	 		title: '地坛'},
-	 	info: "地坛公园又称方泽坛，是古都北京五坛中的第二大坛。" 
+	 	info: "地坛公园又称方泽坛，是古都北京五坛中的第二大坛。",
+	 	infoUrl:""	 	 
 	 }
 ];
 
@@ -57,10 +64,10 @@ function initMap() {
 	ko.applyBindings(viewModel);
 	map = new google.maps.Map(document.getElementById('map'), {
 		center: {lat: 39.910853, lng: 116.408213},
-		zoom:13
+		zoom:11
 	});
 	locations.map(location =>viewModel.addMarker(location.marker));	
-	viewModel.addInfoWindow();
+	locations.map(location => viewModel.fetchInfo(location.marker));
 }
 
 function errorHandler() {
@@ -82,6 +89,21 @@ let ViewModel = function() {
 		self.clearMarkers();
 		markers = [];
 	}
+	this.fetchInfo = function(marker) {
+		fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${marker.title}&utf8=1"`)
+		.then(res => res.json())
+		.then(infos => infos[3][0])
+		.then(url => {
+				let currentlocation = locations.filter(location => location.marker.title === marker.title);
+				let i = locations.indexOf(currentlocation[0])
+				locations[i].infoUrl = url;
+			})
+		.then(self.addInfoWindow)
+		.catch(self.errorCatch)
+	}
+	this.errorCatch = function(e) {
+		alert(`Oops, something goes Wrong!`);
+	}
 	this.addMarker = function(location) {
 		let position = location.position;
 		let title = location.title;
@@ -96,7 +118,7 @@ let ViewModel = function() {
 	this.addInfoWindow = function() {
 		markers.map(function(marker, index, markers) {
 			let currentMarkerInfo = locations.filter(location => location.marker.title === marker.title);			
-			let infoWindow = new google.maps.InfoWindow({content: currentMarkerInfo[0].info});
+			let infoWindow = new google.maps.InfoWindow({content: `${currentMarkerInfo[0].info}</br><a href=${currentMarkerInfo[0].infoUrl} target="_blank">维基百科</a>`});
 			let infoMarker;
 			marker.addListener('click', function() {
 				//如果infoWindow已经打开则不再次打开
@@ -115,10 +137,10 @@ let ViewModel = function() {
 		self.deleteMarkers();
 		map = new google.maps.Map(document.getElementById('map'), {
 			center: location.marker.position,
-			zoom:13
+			zoom:11
 		});
 		self.addMarker(location.marker);
-		self.addInfoWindow();
+		self.fetchInfo(location.marker);
 	}
 	this.locationList = ko.observableArray([]);
 	this.filterText = ko.observable("");
@@ -132,10 +154,9 @@ let ViewModel = function() {
 			});
 		}		
 		self.deleteMarkers();
-		console.log(filteredLocations);
 		filteredLocations.map(location => {
 			self.addMarker(location.marker);
-			self.addInfoWindow();
+			self.fetchInfo(location.marker);
 		});
 		return filteredLocations;
 	}, this);

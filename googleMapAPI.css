@@ -7,15 +7,13 @@
 }
 
 #map {
-	min-height: 240px;
+	min-height: 350px;
 }
 
 #filter-container {
 	height: 100%;
-	/*width: 28%;*/
 	margin-left: 10px;
 	margin-right: 10px;
-	/*float: left;*/
 }
 
 #filter-input input{
