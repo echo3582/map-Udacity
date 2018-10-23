@@ -150,7 +150,8 @@ let ViewModel = function () {
 		markers.map(function (marker, index, markers) {
 			let currentMarkerInfo = locations.filter(location => location.marker.title === marker.title);
 			let infoWindow = new google.maps.InfoWindow({
-				content: `${currentMarkerInfo[0].info}</br><a href=${currentMarkerInfo[0].infoUrl} target="_blank">维基百科</a>`
+				content: `${currentMarkerInfo[0].info}</br><a href=${currentMarkerInfo[0].infoUrl} target="_blank">维基百科</a>`,
+				maxWidth: 200
 			});
 			let infoMarker;
 			marker.addListener('click', function () {
@@ -163,15 +164,13 @@ let ViewModel = function () {
 						marker.setAnimation(null);
 					}, 1000)
 				}
+				map.panTo(marker.position);
 			});
 		});
 	}
 	this.clickedLocation = function (location) {
 		self.deleteMarkers();
-		map = new google.maps.Map(document.getElementById('map'), {
-			center: location.marker.position,
-			zoom: 11
-		});
+		map.panTo(location.marker.position);
 		self.addMarker(location.marker);
 		self.fetchInfo(location.marker);
 	}
