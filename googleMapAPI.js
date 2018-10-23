@@ -175,6 +175,13 @@ let ViewModel = function () {
 		self.addMarker(location.marker);
 		self.fetchInfo(location.marker);
 	}
+	this.count = ko.observable(0);
+	this.showList = function () {
+		return this.count(this.count()+1);
+	};
+	self.collapse = ko.pureComputed(function () {
+		return this.count()%2 !== 0 ? "collapse" : ""
+	}, this);
 	this.locationList = ko.observableArray([]);
 	this.filterText = ko.observable("");
 	self.locationList = ko.computed(function () {
