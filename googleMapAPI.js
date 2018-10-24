@@ -1,5 +1,6 @@
 let map;
 let markers = [];
+let globleInfo;
 let locations = [{
 		marker: {
 			position: {
@@ -155,15 +156,15 @@ let ViewModel = function () {
 			});
 			let infoMarker;
 			marker.addListener('click', function () {
-				//如果infoWindow已经打开则不再次打开
-				if (infoMarker !== 1) {
-					infoMarker = 1;
-					infoWindow.open(map, marker);
-					marker.setAnimation(google.maps.Animation.BOUNCE);
-					setTimeout(function () {
-						marker.setAnimation(null);
-					}, 1000)
-				}
+				if (globleInfo) {	
+					globleInfo.close();
+				} 
+				infoWindow.open(map, marker);
+				globleInfo = infoWindow;
+				marker.setAnimation(google.maps.Animation.BOUNCE);
+				setTimeout(function () {
+					marker.setAnimation(null);
+				}, 1000)
 				map.panTo(marker.position);
 			});
 		});
