@@ -12,7 +12,7 @@ class App extends Component {
 	}
  	
  	render() {
- 		const { locations } = this.state
+		const { locations } = this.state
 	    return (
 	      <div className="container">
 	      	<div className="row">
@@ -24,6 +24,7 @@ class App extends Component {
   	}
 
   	componentDidMount () {
+		const { locations } = this.state
   		fetch('/api/locations.json')
     	.then((res) => res.json())
     	.then((info) => {

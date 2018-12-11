@@ -20,9 +20,8 @@ class Map extends Component {
   }
 
   render () {  
-    let map, marker, infowindow
+    let map, marker, infowindow, infoUrl
     const { locations } = this.props
-    console.log(locations)
     window.initMap = () => {
       map = new window.google.maps.Map(document.getElementById('map'), {
         center: locations[0] ? locations[3].marker.position : {"lat": 39.908967,"lng": 116.397491},
@@ -30,23 +29,28 @@ class Map extends Component {
       })
 
       locations.map((location) => (
-        infowindow = new window.google.maps.InfoWindow({
-          content: location.info
-        }),
 
-        marker = new window.google.maps.Marker({
-          position: location.marker.position,
-          title: location.marker.title,
-          map: map
-        }),
+        fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
+          .then(res => res.json())
+          .then(infos => infos[3][0])
+          .then(url => (
+            infowindow = new window.google.maps.InfoWindow({
+              content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
+              maxWidth: 200
+            }),
 
-        function (m, i) {
-          return m.addListener('click', function () {
-            i.open(map, m)
-            console.log(m.title)
-          })
-        }(marker, infowindow)
+            marker = new window.google.maps.Marker({
+              position: location.marker.position,
+              title: location.marker.title,
+              map: map
+            }),
 
+            function (m, i) {
+              return m.addListener('click', function () {
+                i.open(map, m)
+              })
+            }(marker, infowindow)
+          ))
       ))
     }  
     return (
