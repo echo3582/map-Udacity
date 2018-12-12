@@ -13,6 +13,9 @@ class Map extends Component {
 
   constructor (props) {
     super(props)
+    this.state = {
+      loaded: false
+    }
   }
 
   componentDidMount () {
@@ -22,14 +25,18 @@ class Map extends Component {
   render () {  
     let map, marker, infowindow, infoUrl
     const { locations } = this.props
+    const { loaded } = this.state
     window.initMap = () => {
+      this.setState({ loaded: true })
+    }
+    loaded ? window.renderMap(locations) : console.log('loading')
+    window.renderMap = (locations) => {
       map = new window.google.maps.Map(document.getElementById('map'), {
-        center: locations[0] ? locations[3].marker.position : {"lat": 39.908967,"lng": 116.397491},
+        center: locations[0].marker.position,
         zoom: 10
       })
-
+      console.log(JSON.stringify(locations)+'map')
       locations.map((location) => (
-
         fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
           .then(res => res.json())
           .then(infos => infos[3][0])
@@ -51,8 +58,9 @@ class Map extends Component {
               })
             }(marker, infowindow)
           ))
-      ))
-    }  
+        ))
+      }  
+    
     return (
       <div id="map"></div> 
     )

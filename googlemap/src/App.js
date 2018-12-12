@@ -7,18 +7,29 @@ class App extends Component {
 	constructor (props) {
 		super(props)
 		this.state = {
+			initLocations: [],
 			locations: []
 		}
 	}
  	
+	updateLocations (newLocations) {
+		this.setState({ locations: newLocations })
+	}
+
  	render() {
-		const { locations } = this.state
+		const { locations, initLocations } = this.state
 	    return (
 	      <div className="container">
 	      	<div className="row">
-				<Filter locations={locations}/>
-	       	 	<GoogleMap locations={locations}/>      		
-	      	</div>
+				<Filter
+					initLocations={initLocations}
+					locations={locations}
+					onHandleChange={(newLocations) => this.updateLocations(newLocations)}
+				/>
+	       	 	<GoogleMap
+					locations={locations}
+				/>
+			</div>
 	      </div>
 	    );
   	}
@@ -28,7 +39,10 @@ class App extends Component {
   		fetch('/api/locations.json')
     	.then((res) => res.json())
     	.then((info) => {
-      		this.setState({ locations: info.data.locations })
+	 		this.setState({
+				initLocations: info.data.locations,
+	  			locations: info.data.locations
+			})
     	})
   	}
 }

@@ -10,11 +10,14 @@ class FilterItem extends Component {
 		const { locations } = this.props
 		return (	
 			<ul>
-				{locations.map((location) => (
-					<li key={location.id} className="filterItem">
-						<button className="buttonItem">{location.marker.title}</button>
-			  		</li>
-				))}
+				{
+					// console.log(locations),
+					locations.map((location) => (
+						<li key={location.id} className="filterItem">
+							<button className="buttonItem">{location.marker.title}</button>
+				  		</li>
+					))
+				}
 			</ul>
 		)
 	}
