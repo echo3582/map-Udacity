@@ -49,13 +49,19 @@ class Map extends Component {
             marker = new window.google.maps.Marker({
               position: location.marker.position,
               title: location.marker.title,
-              map: map
+              map: map,
+              animation: window.google.maps.Animation.DROP
             }),
 
             function (m, i) {
               return m.addListener('click', function () {
                 i.open(map, m)
-              })
+                m.setAnimation(window.google.maps.Animation.BOUNCE);
+                setTimeout(function () {
+                  m.setAnimation(null)
+                }, 1000)
+                map.panTo(m.position)
+               })
             }(marker, infowindow)
           ))
         ))
