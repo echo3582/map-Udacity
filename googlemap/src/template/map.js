@@ -23,34 +23,36 @@ class Map extends Component {
   }
 
   render () {  
-    let map, marker, infowindow, infoUrl
-    const { locations } = this.props
+    let map, marker, infowindow
+    const { mapLocations } = this.props
     const { loaded } = this.state
     window.initMap = () => {
-      this.setState({ loaded: true })
+      this.setState({ 
+        loaded: true,
+      })
     }
-    loaded ? window.renderMap(locations) : console.log('loading')
+    console.log(mapLocations+"map")
+    loaded ? window.renderMap(mapLocations) : console.log('loading')
     window.renderMap = (locations) => {
       map = new window.google.maps.Map(document.getElementById('map'), {
         center: locations[0].marker.position,
         zoom: 10
       })
-      console.log(JSON.stringify(locations)+'map')
       locations.map((location) => (
         fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
           .then(res => res.json())
           .then(infos => infos[3][0])
           .then(url => (
-            infowindow = new window.google.maps.InfoWindow({
-              content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
-              maxWidth: 200
-            }),
-
             marker = new window.google.maps.Marker({
               position: location.marker.position,
               title: location.marker.title,
               map: map,
               animation: window.google.maps.Animation.DROP
+            }),
+
+            infowindow = new window.google.maps.InfoWindow({
+              content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
+              maxWidth: 200
             }),
 
             function (m, i) {

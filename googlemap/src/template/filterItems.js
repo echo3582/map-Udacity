@@ -1,26 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-class FilterItem extends Component {
-
-	constructor (props) {
-		super(props);
+const FilterItem = (props) => {	
+	const { initLocations, onHandlePick, locations } = props
+	function pickOneLocation (value) {
+		let filteredLocations = initLocations.filter((location) => (
+			location.marker.title === value))
+		let location = filteredLocations[0] ? filteredLocations : initLocations
+		onHandlePick(location)
 	}
-
-	render() {
-		const { locations } = this.props
-		return (	
+	return (	
 			<ul>
 				{
-					// console.log(locations),
 					locations.map((location) => (
 						<li key={location.id} className="filterItem">
-							<button className="buttonItem">{location.marker.title}</button>
+							<button 
+								className="buttonItem"
+								value={location.marker.title}
+								onClick={(event) => pickOneLocation(event.target.value)}
+							>
+								{location.marker.title}
+							</button>
 				  		</li>
 					))
 				}
 			</ul>
 		)
-	}
 }
 
 export default FilterItem;

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Filter from './template/filter'
 import GoogleMap from './template/map'
+import * as _ from 'lodash'
 
 class App extends Component {
 
@@ -8,16 +9,25 @@ class App extends Component {
 		super(props)
 		this.state = {
 			initLocations: [],
-			locations: []
+			locations: [],
+			mapLocations: []
 		}
 	}
- 	
-	updateLocations (newLocations) {
-		this.setState({ locations: newLocations })
+
+	updateLocations = _.debounce((newLocations) => {
+		this.setState({ 
+			locations: newLocations,
+			mapLocations: newLocations 
+		})
+	}, 400)
+
+	pickLocation (location) {
+		this.setState({ mapLocations: location })
+		console.log(this.state.mapLocations+"App")
 	}
 
  	render() {
-		const { locations, initLocations } = this.state
+		const { locations, initLocations, mapLocations } = this.state
 	    return (
 	      <div className="container">
 	      	<div className="row">
@@ -25,9 +35,11 @@ class App extends Component {
 					initLocations={initLocations}
 					locations={locations}
 					onHandleChange={(newLocations) => this.updateLocations(newLocations)}
+					onHandlePick={(location) => this.pickLocation(location)}
 				/>
 	       	 	<GoogleMap
 					locations={locations}
+					mapLocations={mapLocations}
 				/>
 			</div>
 	      </div>
@@ -35,13 +47,13 @@ class App extends Component {
   	}
 
   	componentDidMount () {
-		const { locations } = this.state
   		fetch('/api/locations.json')
     	.then((res) => res.json())
     	.then((info) => {
 	 		this.setState({
 				initLocations: info.data.locations,
-	  			locations: info.data.locations
+	  			locations: info.data.locations,
+	  			mapLocations: info.data.locations
 			})
     	})
   	}
