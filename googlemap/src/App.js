@@ -19,7 +19,7 @@ class App extends Component {
 			locations: newLocations,
 			mapLocations: newLocations 
 		})
-	}, 400)
+	}, 600)
 
 	pickLocation (location) {
 		this.setState({ mapLocations: location })
@@ -43,7 +43,7 @@ class App extends Component {
 				/>
 			</div>
 	      </div>
-	    );
+	    )
   	}
 
   	componentDidMount () {

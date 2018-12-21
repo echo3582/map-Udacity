@@ -27,6 +27,7 @@ code {
 	height: 100vh;
 	display: flex;
 	justify-content: center;
+	flex-wrap: wrap;
 }
 
 h2 {
@@ -37,7 +38,9 @@ h2 {
 
 .filter {
 	width: 30%;
-	padding: 0 50px;
+	padding: 0 20px;
+	/*position: absolute;*/
+	/*z-index: 1;*/
 }
 
 input {
@@ -77,4 +80,21 @@ li:hover {
 	height: 90vh;
 	width: 70%;
 	align-self: center;
+	margin-bottom: 10px;
+}
+
+@media screen and (max-width: 900px) {
+
+	.filter {
+		width: 100%;
+	}
+
+	input, ul {
+		width: 40%;
+	}
+
+	#map {
+		width: 100%;
+		margin: 0 20px 10px 20px;
+	}
 }

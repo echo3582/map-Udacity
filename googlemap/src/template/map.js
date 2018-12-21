@@ -1,12 +1,17 @@
 import React, { Component } from 'react'
 //google maps 加载
-function loadJS(src) {
+function loadJS(src, err) {
   let ref = window.document.getElementsByTagName("script")[0]
   let script = window.document.createElement("script")
   script.src = src
   script.async = true
   script.defer = true
+  script.onerror = "err"
   ref.parentNode.insertBefore(script, ref)
+}
+
+function errorHandler() {
+  console.log("Oops, the map can't be loaded!");//为什么一开始的时候会调用onerror方法呢 不明白...
 }
 
 class Map extends Component {
@@ -19,7 +24,7 @@ class Map extends Component {
   }
 
   componentDidMount () {
-    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap")
+    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler())
   }
 
   render () {  
@@ -28,7 +33,7 @@ class Map extends Component {
     const { loaded } = this.state
     window.initMap = () => {
       this.setState({ 
-        loaded: true,
+        loaded: true
       })
     }
     console.log(mapLocations+"map")
@@ -36,7 +41,7 @@ class Map extends Component {
     window.renderMap = (locations) => {
       map = new window.google.maps.Map(document.getElementById('map'), {
         center: locations[0].marker.position,
-        zoom: 10
+        zoom: 11
       })
       locations.map((location) => (
         fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)

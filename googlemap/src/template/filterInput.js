@@ -21,6 +21,7 @@ class FilterInput extends Component {
 		const { query } = this.state
 		return (
 		  <input 
+		  	autoFocus
 		  	type="text"
 		  	placeholder="Filter"
 		  	value={query}
