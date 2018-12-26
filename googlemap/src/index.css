@@ -83,18 +83,13 @@ li:hover {
 	margin-bottom: 10px;
 }
 
-@media screen and (max-width: 900px) {
+@media (max-width: 680px) {
 
-	.filter {
+	.filter, input, ul {
 		width: 100%;
-	}
-
-	input, ul {
-		width: 40%;
 	}
 
 	#map {
 		width: 100%;
-		margin: 0 20px 10px 20px;
 	}
 }
