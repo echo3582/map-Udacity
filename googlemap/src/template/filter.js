@@ -3,16 +3,16 @@ import FilterItem from './filterItems';
 import FilterInput from './filterInput';
 
 const Filter = (props) => {
-	const { initLocations, locations, onHandleChange, onHandlePick } = props
+	const { initLocations, locations, onHandleChange, onHandlePick } = props;
 	return (
 		<div className="filter">
 	      	<h2>Filter Tool</h2>
-	      	<FilterInput 
+	      	<FilterInput
 	      		initLocations={initLocations}
 	      		locations={locations}
 	      		onHandleChange={onHandleChange}
 	      	/>
-	        <FilterItem 
+	        <FilterItem
 	        	initLocations={initLocations}
 	        	locations={locations}
 	        	onHandlePick={onHandlePick}

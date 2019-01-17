@@ -1,33 +1,45 @@
-import React, { Component } from 'react'
-import Filter from './template/filter'
-import GoogleMap from './template/map'
-import * as _ from 'lodash'
+import React, { Component } from 'react';
+import Filter from './template/filter';
+import GoogleMap from './template/map';
+import * as _ from 'lodash';
 
 class App extends Component {
-
+	/**
+	* @param {array} initLocations - 初始地点数据
+	* @param {array} locations - 列表正在显示的地点数据
+	* @param {array} mapLocations - 地图正在显示marker的地点的数据
+	*/
 	constructor (props) {
-		super(props)
+		super(props);
 		this.state = {
 			initLocations: [],
 			locations: [],
 			mapLocations: []
-		}
+		};
 	}
 
+	/**
+	* @description 同步更新列表和地图标记为筛选后地点，与此同时，该函数具备防抖功能
+	* @param {array} newLocations - 筛选后数组
+	*/
 	updateLocations = _.debounce((newLocations) => {
-		this.setState({ 
+		this.setState({
 			locations: newLocations,
-			mapLocations: newLocations 
+			mapLocations: newLocations
 		})
-	}, 600)
+	}, 600);
 
+	/**
+	* @description 当用户点击列表中某地点项时，地图仅显示该地点的标记
+	* @param {array} location - 被点击的地点项
+	*/
 	pickLocation (location) {
-		this.setState({ mapLocations: location })
-		console.log(this.state.mapLocations+"App")
+		this.setState({ mapLocations: location });
+		console.log(this.state.mapLocations+"App");
 	}
 
  	render() {
-		const { locations, initLocations, mapLocations } = this.state
+		const { locations, initLocations, mapLocations } = this.state;
 	    return (
 	      <div className="container">
 	      	<div className="row">
@@ -59,4 +71,4 @@ class App extends Component {
   	}
 }
 
-export default App
+export default App;

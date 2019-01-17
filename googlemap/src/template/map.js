@@ -1,13 +1,19 @@
-import React, { Component } from 'react'
-//google maps 加载
+import React, { Component } from 'react';
+/**
+* @description 加载Google maps
+* @param {string} src - Google maps脚本地址
+
+err我不会。。。
+
+*/
 function loadJS(src, err) {
-  let ref = window.document.getElementsByTagName("script")[0]
-  let script = window.document.createElement("script")
-  script.src = src
-  script.async = true
-  script.defer = true
-  script.onerror = "err"
-  ref.parentNode.insertBefore(script, ref)
+  let ref = window.document.getElementsByTagName("script")[0];
+  let script = window.document.createElement("script");
+  script.src = src;
+  script.async = true;
+  script.defer = true;
+  script.onerror = "err";
+  ref.parentNode.insertBefore(script, ref);
 }
 
 function errorHandler() {
@@ -17,37 +23,37 @@ function errorHandler() {
 class Map extends Component {
 
   constructor (props) {
-    super(props)
+    super(props);
     this.state = {
       loaded: false
-    }
+    };
   }
 
   componentDidMount () {
-    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler())
+    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler());
   }
 
-  render () {  
-    let map, marker, infowindow
-    const { mapLocations } = this.props
-    const { loaded } = this.state
+  render () {
+    let map, marker, infowindow;
+    const { mapLocations } = this.props;
+    const { loaded } = this.state;
     window.initMap = () => {
-      this.setState({ 
+      this.setState({
         loaded: true
-      })
-    }
-    console.log(mapLocations+"map")
-    loaded ? window.renderMap(mapLocations) : console.log('loading')
+      });
+    };
+    console.log(mapLocations+"map");
+    loaded ? window.renderMap(mapLocations) : console.log('loading');
     window.renderMap = (locations) => {
       map = new window.google.maps.Map(document.getElementById('map'), {
         center: locations[0].marker.position,
         zoom: 11
-      })
-      locations.map((location) => (
+      });
+      locations.map((location) => {
         fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
           .then(res => res.json())
           .then(infos => infos[3][0])
-          .then(url => (
+          .then((url) => (
             marker = new window.google.maps.Marker({
               position: location.marker.position,
               title: location.marker.title,
@@ -60,22 +66,22 @@ class Map extends Component {
               maxWidth: 200
             }),
 
-            function (m, i) {
-              return m.addListener('click', function () {
-                i.open(map, m)
-                m.setAnimation(window.google.maps.Animation.BOUNCE);
+            function (mar, info) {
+              return mar.addListener('click', function () {
+                info.open(map, mar);
+                mar.setAnimation(window.google.maps.Animation.BOUNCE);
                 setTimeout(function () {
-                  m.setAnimation(null)
-                }, 1000)
-                map.panTo(m.position)
+                  mar.setAnimation(null)
+                }, 1000);
+                map.panTo(mar.position);
                })
             }(marker, infowindow)
           ))
-        ))
-      }  
-    
+        });
+      };
+
     return (
-      <div id="map"></div> 
+      <div id="map"></div>
     )
   }
 }
