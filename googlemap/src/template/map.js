@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 /**
 * @description 加载Google maps
 * @param {string} src - Google maps脚本地址
-
-err我不会。。。
-
 */
 function loadJS(src, err) {
   let ref = window.document.getElementsByTagName("script")[0];
@@ -12,28 +9,30 @@ function loadJS(src, err) {
   script.src = src;
   script.async = true;
   script.defer = true;
-  script.onerror = "err";
+  script.onerror = err();
   ref.parentNode.insertBefore(script, ref);
 }
 
 function errorHandler() {
-  console.log("Oops, the map can't be loaded!");//为什么一开始的时候会调用onerror方法呢 不明白...
+  document.getElementById('map').insertAdjacentHTML('afterbegin', `kdjflkajsdl`)
+  console.log("Oops, the map can't be loaded!");
 }
 
 class Map extends Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       loaded: false
     };
   }
 
-  componentDidMount () {
-    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler());
+  componentDidMount() {
+    // loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler);
+    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler);
   }
 
-  render () {
+  render() {
     let map, marker, infowindow;
     const { mapLocations } = this.props;
     const { loaded } = this.state;
@@ -42,8 +41,38 @@ class Map extends Component {
         loaded: true
       });
     };
-    console.log(mapLocations+"map");
+
     loaded ? window.renderMap(mapLocations) : console.log('loading');
+
+    function addMarker(location) {
+      marker = new window.google.maps.Marker({
+        position: location.marker.position,
+        title: location.marker.title,
+        map: map,
+        animation: window.google.maps.Animation.DROP
+      });
+      return marker;
+    }
+
+    function addInfo(location, url) {
+      infowindow = new window.google.maps.InfoWindow({
+        content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
+        maxWidth: 200
+      });
+      return infowindow;
+    }
+
+    function clickListener(mar, info) {
+      return mar.addListener('click', function () {
+        info.open(map, mar);
+        mar.setAnimation(window.google.maps.Animation.BOUNCE);
+        setTimeout(function () {
+          mar.setAnimation(null)
+        }, 1000);
+        map.panTo(mar.position);
+      })
+    }
+
     window.renderMap = (locations) => {
       map = new window.google.maps.Map(document.getElementById('map'), {
         center: locations[0].marker.position,
@@ -54,34 +83,15 @@ class Map extends Component {
           .then(res => res.json())
           .then(infos => infos[3][0])
           .then((url) => (
-            marker = new window.google.maps.Marker({
-              position: location.marker.position,
-              title: location.marker.title,
-              map: map,
-              animation: window.google.maps.Animation.DROP
-            }),
-
-            infowindow = new window.google.maps.InfoWindow({
-              content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
-              maxWidth: 200
-            }),
-
-            function (mar, info) {
-              return mar.addListener('click', function () {
-                info.open(map, mar);
-                mar.setAnimation(window.google.maps.Animation.BOUNCE);
-                setTimeout(function () {
-                  mar.setAnimation(null)
-                }, 1000);
-                map.panTo(mar.position);
-               })
-            }(marker, infowindow)
+            addMarker(location),
+            addInfo(location, url),
+            clickListener(marker, infowindow)
           ))
-        });
-      };
+      });
+    };
 
     return (
-      <div id="map"></div>
+      <div id = "map"> </div>
     )
   }
 }
