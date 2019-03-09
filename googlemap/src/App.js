@@ -62,7 +62,7 @@ class App extends Component {
 	* @description 获取locations.json中的数据并初始化initLocations、locations、mapLocations
 	*/
   	componentDidMount () {
-  		fetch('/api/locations.json')
+  		fetch('http://www.qianqianx.com/map-Udacity/api/locations.json')
     	.then((res) => res.json())
     	.then((info) => {
 	 		this.setState({

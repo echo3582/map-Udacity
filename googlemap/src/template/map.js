@@ -17,7 +17,7 @@ function loadJS(src, err) {
 }
 
 function errorHandler() {
-  document.getElementById('map').insertAdjacentHTML('afterbegin', `kdjflkajsdl`)
+  document.getElementById('map').insertAdjacentHTML('afterbegin', `Oops, the map can't be loaded!`)
   console.log("Oops, the map can't be loaded!");
 }
 
@@ -34,7 +34,6 @@ class Map extends Component {
 
   componentDidMount() {
     loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler);
-    // loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler);
   }
 
   /**
@@ -139,21 +138,24 @@ class Map extends Component {
 
   initMap() {
 
+    const { mapLocations } = this.props;
+    this.addMap(mapLocations);
     this.setState({
       loaded: true
     });
 
   }
 
-  render() {
-
+  componentDidUpdate() {
     const { mapLocations } = this.props;
     const { loaded } = this.state;
 
-    window.initMap = this.initMap.bind(this)
+    window.initMap = this.initMap.bind(this);
 
     loaded ? this.renderMap(mapLocations) : console.log('loading');
+  }
 
+  render() {
     return (
       <div id = "map"> </div>
     )
