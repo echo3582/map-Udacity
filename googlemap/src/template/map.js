@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 * @param {string} src - Google maps脚本地址
 */
 
-let map, marker, infowindow;
+let map, marker, infowindow, globleInfo;
 
 function loadJS(src, err) {
   let ref = window.document.getElementsByTagName("script")[0];
@@ -12,7 +12,7 @@ function loadJS(src, err) {
   script.src = src;
   script.async = true;
   script.defer = true;
-  script.onerror = err();
+  // script.onerror = err();
   ref.parentNode.insertBefore(script, ref);
 }
 
@@ -33,7 +33,7 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", errorHandler);
+    loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap");
   }
 
   /**
@@ -83,10 +83,14 @@ class Map extends Component {
   */
   clickListener(mar, info) {
     return mar.addListener('click', function () {
+      if (globleInfo) {
+        globleInfo.close();
+      }
       /**
       * @description 打开该标记的信息窗口
       */
       info.open(map, mar);
+      globleInfo = info;
       /**
       * @description 为标记添加动画效果
       */
