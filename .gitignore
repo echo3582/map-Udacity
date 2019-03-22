@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.tags
+.idea/
+googlemap.zip
+googlemap/node_modules/
+googlemap/build/
+ScriptCache + React + Google Api/
+ScriptCache + React + Google Api.zip
