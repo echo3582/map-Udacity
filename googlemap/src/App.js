@@ -4,16 +4,15 @@ import GoogleMap from './template/map';
 import * as _ from 'lodash';
 
 class App extends Component {
-	/**
-	* @param {array} initLocations - 初始地点数据
-	* @param {array} locations - 列表正在显示的地点数据
-	* @param {array} mapLocations - 地图正在显示marker的地点的数据
-	*/
+
 	constructor (props) {
 		super(props);
 		this.state = {
+			/** initLocations - 初始地点数据 */
 			initLocations: [],
+			/** locations - 列表正在显示的地点数据 */
 			locations: [],
+			/** mapLocations - 地图正在显示marker的地点的数据 */
 			mapLocations: []
 		};
 	}
@@ -40,38 +39,38 @@ class App extends Component {
 
  	render() {
 		const { locations, initLocations, mapLocations } = this.state;
-	    return (
-	      <div className="container">
-	      	<div className="row">
-				<Filter
-					initLocations={initLocations}
-					locations={locations}
-					onHandleChange={(newLocations) => this.updateLocations(newLocations)}
-					onHandlePick={(location) => this.pickLocation(location)}
-				/>
-	       	 	<GoogleMap
-					locations={locations}
-					mapLocations={mapLocations}
-				/>
-			</div>
-	      </div>
-	    )
-  	}
+    return (
+      <div className="container">
+      	<div className="row">
+					<Filter
+						initLocations={initLocations}
+						locations={locations}
+						onHandleChange={(newLocations) => this.updateLocations(newLocations)}
+						onHandlePick={(location) => this.pickLocation(location)}
+					/>
+		      <GoogleMap
+						locations={locations}
+						mapLocations={mapLocations}
+					/>
+				</div>
+      </div>
+  	)
+	}
 
-  	/**
+  /**
 	* @description 获取locations.json中的数据并初始化initLocations、locations、mapLocations
 	*/
-  	componentDidMount () {
-  		fetch('http://www.qianqianx.com/map-Udacity/api/locations.json')
-    	.then((res) => res.json())
-    	.then((info) => {
+	componentDidMount () {
+		fetch('http://www.qianqianx.com/map-Udacity/api/locations.json')
+  	.then((res) => res.json())
+  	.then((info) => {
 	 		this.setState({
 				initLocations: info.data.locations,
 	  			locations: info.data.locations,
 	  			mapLocations: info.data.locations
 			})
-    	})
-  	}
+  	})
+	}
 }
 
 export default App;

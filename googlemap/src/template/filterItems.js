@@ -11,9 +11,9 @@ const FilterItem = (props) => {
 	/**
 	* @description 筛选出用户点击的地点数据，并使地图仅显示该地点的标记
 	* @param {string} value - 被点击的地点
-	* @param {array} filteredLocations - 被筛选出的地点数据
 	*/
 	function pickOneLocation (value) {
+		/** filteredLocations - 被筛选出的地点数据 */
 		let filteredLocations = initLocations.filter((location) => (
 			location.marker.title === value));
 		let location = filteredLocations[0] ? filteredLocations : initLocations;

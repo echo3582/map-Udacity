@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
+
+let map, marker, infowindow, globleInfo;
 /**
 * @description 加载Google maps
 * @param {string} src - Google maps脚本地址
 */
-
-let map, marker, infowindow, globleInfo;
-
 function loadJS(src, err) {
   let ref = window.document.getElementsByTagName("script")[0];
   let script = window.document.createElement("script");
@@ -20,8 +19,6 @@ function errorHandler() {
   document.getElementById('map').insertAdjacentHTML('afterbegin', `Oops, the map can't be loaded!`)
   console.log("Oops, the map can't be loaded!");
 }
-
-
 
 class Map extends Component {
 
@@ -39,8 +36,6 @@ class Map extends Component {
   /**
   * @description 添加地图
   * @param {array} locations - 地点们
-  * @param {object} map - 地图
-  * @param {object} locations[0].marker.position - 第一个地点的位置
   */
   addMap(locations) {
     map = new window.google.maps.Map(document.getElementById('map'), {
@@ -53,9 +48,6 @@ class Map extends Component {
   /**
   * @description 为地图添加地点标记
   * @param {object} location - 地点信息
-  * @param {object} marker - 地点标记
-  * @param {object} location.marker.position - 位置信息
-  * @param {object} location.marker.title - 位置名称
   */
   addMarker(location) {
     marker = new window.google.maps.Marker({
@@ -86,24 +78,16 @@ class Map extends Component {
       if (globleInfo) {
         globleInfo.close();
       }
-      /**
-      * @description 打开该标记的信息窗口
-      */
+      /** 打开该标记的信息窗口 */
       info.open(map, mar);
       globleInfo = info;
-      /**
-      * @description 为标记添加动画效果
-      */
+      /** 点击标记时标记上下跳动 */
       mar.setAnimation(window.google.maps.Animation.BOUNCE);
-      /**
-      * @description 1s后停止动画
-      */
+      /** 1s后停止动画 */
       setTimeout(function () {
         mar.setAnimation(null)
       }, 1000);
-      /**
-      * @description 平滑移动中心点
-      */
+      /** 平滑移动中心点 */
       map.panTo(mar.position);
     })
   }
@@ -112,29 +96,19 @@ class Map extends Component {
   * @description 渲染地图
   */
   renderMap(locations) {
-    /**
-    * @description 添加地图
-    */
+    /** 添加地图 */
     this.addMap(locations);
-    /**
-    * @description 为每一个地点添加标记、窗口信息和点击监听事件
-    */
+    /** 为每一个地点添加标记、窗口信息和点击监听事件 */
     locations.map((location) => {
       fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
         .then(res => res.json())
         .then(infos => infos[3][0])
         .then((url) => {
-          /**
-          * @description 添加标记
-          */
+          /** 添加标记 */
           this.addMarker(location);
-          /**
-          * @description 添加窗口信息
-          */
+          /** 添加窗口信息 */
           this.addInfo(location, url);
-          /**
-          * @description 添加点击监听事件
-          */
+          /** 添加点击监听事件 */
           this.clickListener(marker, infowindow);
         })
     });
@@ -153,12 +127,9 @@ class Map extends Component {
   componentDidUpdate() {
     const { mapLocations } = this.props;
     const { loaded } = this.state;
-
     window.initMap = this.initMap.bind(this);
-
     loaded ? this.renderMap(mapLocations) : console.log('loading');
   }
-
   render() {
     return (
       <div id = "map"> </div>
