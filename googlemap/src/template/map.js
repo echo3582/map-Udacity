@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
-let map, marker, infoWindow, globalInfo;
+
 class Map extends Component {
+
+  static map;
+  static marker;
+  static infoWindow;
+  static globalInfo;
 
   constructor(props) {
     super(props);
@@ -13,23 +18,22 @@ class Map extends Component {
   * @param {string} src - Google maps脚本地址
   * @param {function} error - 错误处理函数
   */
-  loadJS(src, error) {
+  static loadJS(src, error) {
     let ref = window.document.getElementsByTagName("script")[0];
     let script = window.document.createElement("script");
     script.src = src;
     script.async = true;
     script.defer = true;
-    script.onerror = error();
+    script.onerror = error;
     ref.parentNode.insertBefore(script, ref);
   }
 
-  errorHandler() {
-    document.getElementById('map').insertAdjacentHTML('afterbegin', `Oops, the map can't be loaded!`)
-    console.log("Oops, the map can't be loaded!");
+  static errorHandler(event) {
+    document.getElementById('map').insertAdjacentHTML('afterbegin', `Oops, the map can't be loaded! Maybe you need a tool to visit google ~`)
   }
 
   componentDidMount() {
-    this.loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", this.errorHandler);
+    Map.loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", Map.errorHandler);
   }
 
   /**
@@ -37,11 +41,11 @@ class Map extends Component {
   * @param {array} locations - 地点们
   */
   static addMap(locations) {
-    map = new window.google.maps.Map(document.getElementById('map'), {
+    Map.map = new window.google.maps.Map(document.getElementById('map'), {
       center: locations[0].marker.position,
       zoom: 11
     });
-    return map;
+    return Map.map;
   }
 
   /**
@@ -49,24 +53,24 @@ class Map extends Component {
   * @param {object} location - 地点信息
   */
   static addMarker(location) {
-    marker = new window.google.maps.Marker({
+    Map.marker = new window.google.maps.Marker({
       position: location.marker.position,
       title: location.marker.title,
-      map: map,
+      map: Map.map,
       animation: window.google.maps.Animation.DROP
     });
-    return marker;
+    return Map.marker;
   }
 
   /**
   * @description 为地点添加信息窗口和维基百科词条链接
   */
   static addInfo(location, url) {
-    infoWindow= new window.google.maps.InfoWindow({
+    Map.infoWindow= new window.google.maps.InfoWindow({
       content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
       maxWidth: 200
     });
-    return infoWindow;
+    return Map.infoWindow;
   }
 
   /**
@@ -74,12 +78,12 @@ class Map extends Component {
   */
   clickListener(mar, info) {
     return mar.addListener('click', function () {
-      if (globalInfo) {
-        globalInfo.close();
+      if (Map.globalInfo) {
+        Map.globalInfo.close();
       }
       /** 打开该标记的信息窗口 */
-      info.open(map, mar);
-      globalInfo = info;
+      info.open(Map.map, mar);
+      Map.globalInfo = info;
       /** 点击标记时标记上下跳动 */
       mar.setAnimation(window.google.maps.Animation.BOUNCE);
       /** 1s后停止动画 */
@@ -87,7 +91,7 @@ class Map extends Component {
         mar.setAnimation(null)
       }, 1000);
       /** 平滑移动中心点 */
-      map.panTo(mar.position);
+      Map.map.panTo(mar.position);
     })
   }
 
@@ -108,7 +112,7 @@ class Map extends Component {
           /** 添加窗口信息 */
           Map.addInfo(location, url);
           /** 添加点击监听事件 */
-          this.clickListener(marker, infoWindow);
+          this.clickListener(Map.marker, Map.infoWindow);
         })
     });
   };
