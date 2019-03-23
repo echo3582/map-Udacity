@@ -21,6 +21,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
 .tags
 .idea/
 googlemap.zip
@@ -29,4 +30,3 @@ googlemap/build/
 ScriptCache + React + Google Api/
 ScriptCache + React + Google Api.zip
 yarn.lock
-
