@@ -13,7 +13,8 @@ class App extends Component {
 			/** locations - 列表正在显示的地点数据 */
 			locations: [],
 			/** mapLocations - 地图正在显示marker的地点的数据 */
-			mapLocations: []
+			mapLocations: [],
+			itemIsClicked: false
 		};
 	}
 
@@ -33,12 +34,14 @@ class App extends Component {
 	* @param {array} location - 被点击的地点项
 	*/
 	pickLocation (location) {
-		this.setState({ mapLocations: location });
-		console.log(this.state.mapLocations+"App");
+		this.setState({
+			mapLocations: location,
+			itemIsClicked: true
+		});
 	}
 
  	render() {
-		const { locations, initLocations, mapLocations } = this.state;
+		const { locations, initLocations, mapLocations, itemIsClicked } = this.state;
     return (
       <div className="container">
       	<div className="row">
@@ -51,6 +54,7 @@ class App extends Component {
 		      <GoogleMap
 						locations={locations}
 						mapLocations={mapLocations}
+						itemIsClicked={itemIsClicked}
 					/>
 				</div>
       </div>

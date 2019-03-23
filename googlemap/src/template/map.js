@@ -6,11 +6,12 @@ class Map extends Component {
   static marker;
   static infoWindow;
   static globalInfo;
+  static markers = [];
 
   constructor(props) {
     super(props);
     this.state = {
-      loaded: false
+      loaded: false,
     };
   }
   /**
@@ -28,7 +29,7 @@ class Map extends Component {
     ref.parentNode.insertBefore(script, ref);
   }
 
-  static errorHandler(event) {
+  static errorHandler() {
     document.getElementById('map').insertAdjacentHTML('afterbegin', `Oops, the map can't be loaded! Maybe you need a tool to visit google ~`)
   }
 
@@ -59,7 +60,22 @@ class Map extends Component {
       map: Map.map,
       animation: window.google.maps.Animation.DROP
     });
+    Map.markers.push(Map.marker);
     return Map.marker;
+  }
+
+  static setMapOnAll(map) {
+    Map.markers.map((marker) => {
+      marker.setMap(map);
+      return null;
+    });
+  }
+  /**
+  * @description 清除地图上的所有标记
+  */
+  static clearMarkers() {
+    Map.setMapOnAll(null);
+    Map.markers = [];
   }
 
   /**
@@ -76,31 +92,31 @@ class Map extends Component {
   /**
   * @description 为信息窗口添加点击监听事件
   */
-  clickListener(mar, info) {
-    return mar.addListener('click', function () {
+  clickListener(marker, infoWindow) {
+    return marker.addListener('click', function () {
       if (Map.globalInfo) {
         Map.globalInfo.close();
       }
       /** 打开该标记的信息窗口 */
-      info.open(Map.map, mar);
-      Map.globalInfo = info;
+      infoWindow.open(Map.map, marker);
+      Map.globalInfo = infoWindow;
       /** 点击标记时标记上下跳动 */
-      mar.setAnimation(window.google.maps.Animation.BOUNCE);
+      marker.setAnimation(window.google.maps.Animation.BOUNCE);
       /** 1s后停止动画 */
       setTimeout(function () {
-        mar.setAnimation(null)
+        marker.setAnimation(null)
       }, 1000);
       /** 平滑移动中心点 */
-      Map.map.panTo(mar.position);
+      Map.map.panTo(marker.position);
     })
   }
 
   /**
   * @description 渲染地图
   */
-  renderMap(locations) {
-    /** 添加地图 */
-    Map.addMap(locations);
+  renderMap(locations, itemIsClicked) {
+    /** 清除地图上的所有标记 */
+    Map.clearMarkers();
     /** 为每一个地点添加标记、窗口信息和点击监听事件 */
     locations.map((location) => {
       fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
@@ -113,12 +129,16 @@ class Map extends Component {
           Map.addInfo(location, url);
           /** 添加点击监听事件 */
           this.clickListener(Map.marker, Map.infoWindow);
+          /** 如果发生了列表点击事件，则把地图中心点平滑移动到被点击的地点 */
+          if (itemIsClicked) {
+            Map.map.panTo(location.marker.position);
+          }
         })
+      return null;
     });
   };
 
   initMap() {
-
     const { mapLocations } = this.props;
     Map.addMap(mapLocations);
     this.setState({
@@ -128,11 +148,11 @@ class Map extends Component {
   }
 
   componentDidUpdate() {
-    const { mapLocations } = this.props;
+    const { mapLocations, itemIsClicked } = this.props;
     const { loaded } = this.state;
     window.initMap = this.initMap.bind(this);
     if (loaded) {
-      this.renderMap(mapLocations);
+      this.renderMap(mapLocations, itemIsClicked);
     }
   }
   render() {
