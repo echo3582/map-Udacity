@@ -1,11 +1,9 @@
 import React from 'react';
 
 const FilterItem = (props) => {
-	/**
-	* @param {array} initLocations - 初始地点数据
-	* @param {array} locations - 列表正在显示的地点数据
-	* @param {function} onHandlePick - 地图仅显示被点击地点的标记
-	*/
+	/** initLocations - 初始地点数据 */
+	/** locations - 列表正在显示的地点数据 */
+	/** onHandlePick - 地图仅显示被点击地点的标记 */
 	const { initLocations, onHandlePick, locations } = props;
 
 	/**
