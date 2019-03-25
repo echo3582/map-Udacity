@@ -129,10 +129,9 @@ class Map extends Component {
           Map.addInfo(location, url);
           /** 添加点击监听事件 */
           this.clickListener(Map.marker, Map.infoWindow);
-          /** 如果发生了列表点击事件，则把地图中心点平滑移动到被点击的地点 */
-          if (itemIsClicked) {
-            Map.map.panTo(location.marker.position);
-          }
+          /** 平滑移动中心点 */
+          Map.map.panTo(location.marker.position);
+
         })
       return null;
     });

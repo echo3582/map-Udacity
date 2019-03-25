@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Input } from 'antd';
 
 class FilterInput extends Component {
 
@@ -29,7 +30,7 @@ class FilterInput extends Component {
 	render () {
 		const { query } = this.state;
 		return (
-		  <input
+		  <Input
 		  	autoFocus
 		  	type="text"
 		  	placeholder="Filter"

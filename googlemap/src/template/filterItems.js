@@ -1,4 +1,5 @@
 import React from 'react';
+import { List } from 'antd';
 
 const FilterItem = (props) => {
 	/** initLocations - 初始地点数据 */
@@ -21,7 +22,7 @@ const FilterItem = (props) => {
 			<ul>
 				{
 					locations.map((location) => (
-						<li key={location.id} className="filterItem">
+						<List key={location.id} className="filterItem">
 							<button
 								className="buttonItem"
 								value={location.marker.title}
@@ -29,7 +30,7 @@ const FilterItem = (props) => {
 							>
 								{location.marker.title}
 							</button>
-				  		</li>
+				  	</List>
 					))
 				}
 			</ul>
