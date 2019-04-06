@@ -13,6 +13,7 @@ class Map extends Component {
     this.state = {
       loaded: false,
     };
+    window.initMap = this.initMap.bind(this);
   }
   /**
   * @description 加载Google maps
@@ -149,7 +150,6 @@ class Map extends Component {
   componentDidUpdate() {
     const { mapLocations, itemIsClicked } = this.props;
     const { loaded } = this.state;
-    window.initMap = this.initMap.bind(this);
     if (loaded) {
       this.renderMap(mapLocations, itemIsClicked);
     }

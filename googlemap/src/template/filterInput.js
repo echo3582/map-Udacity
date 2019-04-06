@@ -21,10 +21,8 @@ class FilterInput extends Component {
 		/** filteredLocations - 被筛选出的地点数据 */
 		let filteredLocations = initLocations.filter((location) => (
 			location.marker.title.indexOf(query) !== -1));
-		/** newLocations - 应显示地点数据 */
-		let newLocations = filteredLocations[0] ? filteredLocations : initLocations;
 		/** onHandleChange - 更新列表和地图显示 */
-		onHandleChange(newLocations);
+		onHandleChange(filteredLocations);
 	};
 
 	render () {
