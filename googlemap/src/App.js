@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import Filter from './template/filter';
-import GoogleMap from './template/map';
-import * as _ from 'lodash';
+import React, { Component } from 'react'
+import Filter from './template/filter'
+import GoogleMap from './template/map'
+import * as _ from 'lodash'
 
 class App extends Component {
 
 	constructor (props) {
-		super(props);
+		super(props)
 		this.state = {
 			/** initLocations - 初始地点数据 */
 			initLocations: [],
@@ -14,8 +14,7 @@ class App extends Component {
 			locations: [],
 			/** mapLocations - 地图正在显示marker的地点的数据 */
 			mapLocations: [],
-			itemIsClicked: false
-		};
+		}
 	}
 
 	/**
@@ -27,7 +26,7 @@ class App extends Component {
 			locations: newLocations,
 			mapLocations: newLocations
 		})
-	}, 600);
+	}, 600)
 
 	/**
 	* @description 当用户点击列表中某地点项时，地图仅显示该地点的标记
@@ -36,12 +35,11 @@ class App extends Component {
 	pickLocation (location) {
 		this.setState({
 			mapLocations: location,
-			itemIsClicked: true
-		});
+		})
 	}
 
  	render() {
-		const { locations, initLocations, mapLocations, itemIsClicked } = this.state;
+		const { locations, initLocations, mapLocations } = this.state
     return (
       <div className="container">
       	<div className="row">
@@ -54,7 +52,6 @@ class App extends Component {
 		      <GoogleMap
 						locations={locations}
 						mapLocations={mapLocations}
-						itemIsClicked={itemIsClicked}
 					/>
 				</div>
       </div>
@@ -66,15 +63,15 @@ class App extends Component {
 	*/
 	componentDidMount () {
 		fetch('http://www.qianqianx.com/map-Udacity/api/locations.json')
-  	.then((res) => res.json())
-  	.then((info) => {
+		.then((res) => res.json())
+		.then((info) => {
 	 		this.setState({
 				initLocations: info.data.locations,
-	  			locations: info.data.locations,
-	  			mapLocations: info.data.locations
+	  		locations: info.data.locations,
+	  		mapLocations: info.data.locations
 			})
-  	})
+		})
 	}
 }
 
-export default App;
+export default App

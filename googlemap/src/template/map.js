@@ -1,19 +1,18 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class Map extends Component {
 
-  static map;
-  static marker;
-  static infoWindow;
-  static globalInfo;
-  static markers = [];
+  static map
+  static marker
+  static infoWindow
+  static globalInfo
+  static markers = []
+  static mapLoaded = false
+  static mapAdded = false
 
   constructor(props) {
-    super(props);
-    this.state = {
-      loaded: false,
-    };
-    window.initMap = this.initMap.bind(this);
+    super(props)
+    window.initMap = this.initMap.bind(this)
   }
   /**
   * @description 加载Google maps
@@ -21,13 +20,12 @@ class Map extends Component {
   * @param {function} error - 错误处理函数
   */
   static loadJS(src, error) {
-    let ref = window.document.getElementsByTagName("script")[0];
-    let script = window.document.createElement("script");
-    script.src = src;
-    script.async = true;
-    script.defer = true;
-    script.onerror = error;
-    ref.parentNode.insertBefore(script, ref);
+    let ref = window.document.getElementsByTagName("script")[0]
+    let script = window.document.createElement("script")
+    script.src = src
+    script.async = true
+    script.onerror = error
+    ref.parentNode.insertBefore(script, ref)
   }
 
   static errorHandler() {
@@ -35,7 +33,7 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    Map.loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", Map.errorHandler);
+    Map.loadJS("https://maps.googleapis.com/maps/api/js?key=AIzaSyBEbHiCAD3pznHIe2nzSWIPuZ2prAUQdeE&libraries=places&callback=initMap", Map.errorHandler)
   }
 
   /**
@@ -46,8 +44,8 @@ class Map extends Component {
     Map.map = new window.google.maps.Map(document.getElementById('map'), {
       center: locations[0].marker.position,
       zoom: 11
-    });
-    return Map.map;
+    })
+    return Map.map
   }
 
   /**
@@ -60,23 +58,23 @@ class Map extends Component {
       title: location.marker.title,
       map: Map.map,
       animation: window.google.maps.Animation.DROP
-    });
-    Map.markers.push(Map.marker);
-    return Map.marker;
+    })
+    Map.markers.push(Map.marker)
+    return Map.marker
   }
 
   static setMapOnAll(map) {
     Map.markers.map((marker) => {
-      marker.setMap(map);
-      return null;
-    });
+      marker.setMap(map)
+      return null
+    })
   }
   /**
   * @description 清除地图上的所有标记
   */
   static clearMarkers() {
-    Map.setMapOnAll(null);
-    Map.markers = [];
+    Map.setMapOnAll(null)
+    Map.markers = []
   }
 
   /**
@@ -86,38 +84,38 @@ class Map extends Component {
     Map.infoWindow= new window.google.maps.InfoWindow({
       content: `${location.info}</br><a href=${url} target="_blank">维基百科</a>`,
       maxWidth: 200
-    });
-    return Map.infoWindow;
+    })
+    return Map.infoWindow
   }
 
   /**
-  * @description 为信息窗口添加点击监听事件
+  * @description 为地图标记添加点击监听事件
   */
   clickListener(marker, infoWindow) {
     return marker.addListener('click', function () {
       if (Map.globalInfo) {
-        Map.globalInfo.close();
+        Map.globalInfo.close()
       }
       /** 打开该标记的信息窗口 */
-      infoWindow.open(Map.map, marker);
-      Map.globalInfo = infoWindow;
+      infoWindow.open(Map.map, marker)
+      Map.globalInfo = infoWindow
       /** 点击标记时标记上下跳动 */
-      marker.setAnimation(window.google.maps.Animation.BOUNCE);
+      marker.setAnimation(window.google.maps.Animation.BOUNCE)
       /** 1s后停止动画 */
       setTimeout(function () {
         marker.setAnimation(null)
-      }, 1000);
+      }, 1000)
       /** 平滑移动中心点 */
-      Map.map.panTo(marker.position);
+      Map.map.panTo(marker.position)
     })
   }
 
   /**
-  * @description 渲染地图
+  * @description 更新地图
   */
-  renderMap(locations, itemIsClicked) {
+  updateMap(locations) {
     /** 清除地图上的所有标记 */
-    Map.clearMarkers();
+    Map.clearMarkers()
     /** 为每一个地点添加标记、窗口信息和点击监听事件 */
     locations.map((location) => {
       fetch(`https://zh.wikipedia.org//w/api.php?action=opensearch&origin=*&format=json&search=${location.marker.title}&utf8=1"`)
@@ -125,35 +123,44 @@ class Map extends Component {
         .then(infos => infos[3][0])
         .then((url) => {
           /** 添加标记 */
-          Map.addMarker(location);
+          Map.addMarker(location)
           /** 添加窗口信息 */
-          Map.addInfo(location, url);
+          Map.addInfo(location, url)
           /** 添加点击监听事件 */
-          this.clickListener(Map.marker, Map.infoWindow);
+          this.clickListener(Map.marker, Map.infoWindow)
           /** 平滑移动中心点 */
-          Map.map.panTo(location.marker.position);
+          Map.map.panTo(location.marker.position)
 
         })
-      return null;
-    });
-  };
-
+      return null
+    })
+  }
+  /**
+  * @description 初始化地图
+  */
   initMap() {
-    const { mapLocations } = this.props;
-    Map.addMap(mapLocations);
-    this.setState({
-      loaded: true
-    });
-
+    const { mapLocations } = this.props
+    if (mapLocations.length !== 0) {
+        Map.addMap(mapLocations)
+        this.updateMap(mapLocations)
+        Map.mapAdded = true
+    }
+    Map.mapLoaded = true
   }
 
   componentDidUpdate() {
-    const { mapLocations, itemIsClicked } = this.props;
-    const { loaded } = this.state;
-    if (loaded) {
-      this.renderMap(mapLocations, itemIsClicked);
+    const { mapLocations } = this.props
+    /**
+    * 如果地图已经创建并添加了则执行更新地图函数
+    * 如果地图没有还没有被添加但是已经被加载了则执行初始化地图函数
+    */
+    if (Map.mapAdded) {
+      this.updateMap(mapLocations)
+    } else if (Map.mapLoaded) {
+      this.initMap()
     }
   }
+
   render() {
     return (
       <div id = "map"> </div>
@@ -161,4 +168,4 @@ class Map extends Component {
   }
 }
 
-export default Map;
+export default Map
